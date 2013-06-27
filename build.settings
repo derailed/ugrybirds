@@ -1,0 +1,17 @@
+-- build.settings
+
+settings =
+{
+  orientation =
+  {
+      default = "landscape",
+  },
+  
+  ipad =
+  {
+    plist=
+    {
+      UIHiddenStatusBar = true,
+    }
+  }
+}
