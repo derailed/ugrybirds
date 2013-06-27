@@ -10,10 +10,6 @@ local game    = display.newGroup()
 display.setDefault( "fillColor", 255, 105, 73)
 
 function draw_landscape()
-  -- local background = display.newRect(0, 0, display.contentWidth, display.contentHeight)
-  -- background:setFillColor(152,108,170)
-  -- background:toBack()  
-  
   local sky = display.newImage("assets/sky.png")
   sky.height = 700
   sky:toBack()
@@ -59,26 +55,27 @@ function draw_blocks()
   end
 end
 
+function slingshot(evt)
+  if evt.phase == "began" then
+    display.getCurrentStage():setFocus( bird )
+    audio.play(stretch)
+  elseif evt.phase == "ended" then
+    bird:applyLinearImpulse( evt.xStart-evt.x, evt.yStart-evt.y, bird.x, bird.y )
+    display.getCurrentStage():setFocus(nil)
+    audio.play(shot)
+  end
+end
+
+function camera_pan(e)
+  game.x = game.x + (300 - bird.x - game.x)*0.05
+end
+
+
 -- Let the game begin...
 draw_landscape()
 draw_bird()
 draw_grounds()
 draw_blocks()
 
-function birdTouched(evt)
-  if evt.phase == "began" then
-    display.getCurrentStage():setFocus( bird )
-    audio.play(stretch)
-  elseif evt.phase == "ended" then
-    bird:applyLinearImpulse( evt.xStart - evt.x, evt.yStart-evt.y, bird.x, bird.y )
-    display.getCurrentStage():setFocus(nil)
-    audio.play(shot)    
-  end
-end
-bird:addEventListener( "touch", birdTouched )
-
-function loop(e)
-  local targetx = 300 - bird.x
-  game.x = game.x + (targetx-game.x)*0.05
-end
-Runtime:addEventListener( 'enterFrame', loop )
+bird:addEventListener( "touch", slingshot )
+Runtime:addEventListener( 'enterFrame', camera_pan )
